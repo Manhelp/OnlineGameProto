@@ -1,0 +1,1 @@
+protoc -I=proto --csharp_out=out proto/*.proto
