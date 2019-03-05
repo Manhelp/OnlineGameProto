@@ -1,0 +1,48 @@
+syntax="proto3";
+
+//package baseinfo;
+
+//登录 token
+message LoginToken {
+	int32 createTime = 1;
+	int32 updateTime = 2;
+	int32 tokenCheck = 3;
+	int32 ipAddr     = 4;
+	int32 loginsvrID = 5;
+	int32 tempID     = 6;
+}
+
+//角色外显
+message SimpleFeature {
+	int32 sex    = 1; //性别
+	int32 job    = 2; //职业
+	int32 hair   = 3; //发型
+	int32 face   = 4; //脸型
+	int32 weapon = 5; //武器
+	int32 dress  = 6; //衣服
+}
+
+//需要更新的玩家信息
+message NeedUpdateSelectPlayerInfo {
+	string name           = 1; //名字
+	int32 level           = 3; //等级
+	int32 mapid           = 4; //所在地图ID
+	int32 cloneMapID      = 5; //所在副本地图ID
+	int32 homeMapID       = 6; //出生地图ID
+	int32 gmlevel         = 7; //GM等级
+	int64 userOnlyID      = 8; //角色唯一ID
+	
+	SimpleFeature feature = 9; //外显
+}
+
+//登录界面的角色信息
+message SelectPlayerInfo {
+	bool deleted        = 1; //删除状态
+	int32 posdeltime    = 2; //删除时间
+	int32 remaindeltime = 4; //剩余删除时间
+	int32 lastlogintime = 3; //最后登录时间
+	string lastloginip  = 5; //最后登录IP
+	int32 playerbantime = 6; //角色封号到期时间
+	
+	NeedUpdateSelectPlayerInfo info = 7;
+}

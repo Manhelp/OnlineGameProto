@@ -1,0 +1,160 @@
+syntax="proto3";
+
+package loginproto;
+
+import "BaseInfo.proto";
+
+//0x0101
+message UserPreLogin {
+	int32 checkCode = 1; //校验码
+	int32 clientVer = 2; //客户端版本
+}
+
+//0x0102
+message UserPreLoginRet {
+	int32 serverVer        = 1; //服务器版本
+	repeated int32 passkey = 2; //校验key
+	sint32 encodeType      = 3; //加密类型
+	repeated int32 key     = 4; //检验值
+}
+
+//0x0103
+message UserLogin {
+	bool queryhistory = 1; //false 正常登陆游戏 true 只是查询账号登陆历史
+	bool tokenlogin   = 2; //false 正常登陆游戏 true 使用运营商人临牌登陆
+	bool forcelogin   = 3; //false 正常登陆游戏 true 强制登陆
+	int32 clientver   = 4; //客户端版本
+	string account    = 5; //账号
+	string accountdis = 6; //账号描述
+	string channel    = 7; //注册渠道
+	int32 zoneid      = 8; //区服ID
+	int32 truezoneid  = 9; //真实区服ID
+}
+
+//IP登录
+message NormaluserLogin {
+	UserLogin login = 1;
+	string passMd5  = 2;
+	int32 passcrc32 = 3; //CRC32校验值
+	bool isonlyip   = 4; //是否只是IP登录
+}
+
+//平台SDK登录//暂时不用
+message TradeuserLogin {
+	UserLogin login    = 1;
+	int32 tradeid      = 2;  //平台ID
+	string checkTime   = 3;  //校验时间
+	string checkServer = 4;  //校验服务器
+	string passMd5     = 5;  //MD5检验
+	string payToken    = 6;  //支付token
+	int32 platform     = 7;  //登录端类型
+	int32 zoenid       = 8;  //当前服务器zoneid
+	string clientVer   = 9;  //客户端版本
+	string invkey      = 10; //邀请注册信息
+	string invtime     = 11; //邀请注册时间
+	string openid      = 12; //邀请openid
+	string customData  = 13; //客户端sdk信息
+}
+
+
+enum E_LOGIN{
+	_LOGIN_RET_SUCCESS_								=0;
+
+	_LOGIN_RET_ISLOGIN_								=-1;		//帐号已登陆
+	_LOGIN_RET_SERMEMOUT_							=-2;		//服务器异常 创建对象失败
+
+	_LOGIN_RET_PASSERROR_							=-4;		//密码错误
+	_LOGIN_RET_PASSERRORMAX_DISABLELOGIN_			=-5;		//错误次数过多 封停10分钟
+	_LOGIN_RET_LOGIN_TOOFAST_						=-6;		//登陆间隔时间太短 ...
+	_LOGIN_RET_LOGIN_NOTEXIST_						=-7;		//账号不存在
+
+
+	_LOGIN_RET_SELSVRERROR_							=-8;		//连接错了账号服务器
+	_LOGIN_RET_DISABLEACCOUNT_						=-15;		//禁用的帐号
+
+	_LOGIN_RET_NOTIFYGATE_ERROR_					=-20;		//登陆成功但是 通知网关失败
+
+	_LOGIN_RET_TRADETOKENTIMEOUT_					=-25;		//运营商令牌超时
+	_LOGIN_RET_TRADETOKENERROR_						=-26;		//运营商令牌错误
+
+	_LOGIN_RET_FULLPLAYER_							=-27;		//人数已满
+	//===================重登陆异常
+	_LOGIN_RET_TOKEN_ERROR_							=-30;		//重登陆数据异常 IP改变或则loginsvr重启过 找不到该帐号
+
+	//===================登陆游戏服务器
+	_LOGIN_RET_PLAYER_NOTLOGIN_						=-50;		//该用户帐号没有登陆
+	_LOGIN_RET_PLAYER_ISLOGIN_						=-51;		//该用户帐号已经登陆
+	_LOGIN_RET_DBSVRASSERT_							=-55;		//数据库服务器在维护
+	_LOGIN_RET_PLAYER_ISSAVEING_					=-56;		//角色数据正在存档
+	_LOGIN_RET_PLAYER_IPREGBAN_					    =-57;		//IP注册检查封号
+	//===================查询角色信息
+	_LOGIN_RET_OTHERZONEHASPLAYER_					=-101;		//其他服务器有角色
+	_LOGIN_RET_THISZONENOPLAYER_					=-100;		//该服务器没有角色
+	_LOGIN_RET_TXSERVERERROR_						=-102;		//腾迅服务器返回
+
+}
+
+//0x0104
+message UserLoginRet {
+	E_LOGIN errorCode   = 1;
+	int32 loginsvrIdType     = 2; //服务器ID_TYPE
+	int32 svrVer        = 3; //服务器版
+	int32 svrZoneID     = 4; //区服ID
+	int32 svrIndex      = 5; //区服索引
+	int32 currSelPlayer = 6; //上一次选择的角色索引
+	repeated SelectPlayerInfo players = 7; //角色信息
+}
+
+//0x0105
+message UserLogin2GameSvr {
+	int32 loginsvrIdType  = 1;  //账号服务器type
+	int32 tokenCheck      = 2;  //tokenCheck
+	int32 clientVer       = 3;  //客户端版本
+	LoginToken loginToken = 4;  //tokenlogin
+	int32 gamesvrIdType   = 5;  //游戏服type
+	bool reloginType      = 6;  //重登录类型 false 正常重连，true 切服重连
+	string account        = 7;  //账号
+	string playerName     = 8;  //角色名
+	string platformName   = 9;  //平台名
+	string mechineID      = 10; //机器ID
+	int64 userOnlyID      = 11; //用户唯一ID
+	int32 trueZoneID      = 12; //真实区服ID
+	string loginChannel   = 13; //登录渠道
+}
+
+//0x0106
+message UserLogin2GameSvrRet {
+	E_LOGIN errorCode  = 1;
+	int32 svrVer       = 2;
+	int32 svrZoneID    = 3;
+	int32 svrIndex     = 4;
+	int32 encodeType   = 5;
+	repeated int32 key = 6;
+}
+
+
+//0x0107
+message UserSelPlayer {
+	int32 selectIdx = 1;
+	string name     = 2;
+}
+enum E_SELPLAYER{
+	_SEL_PLAYER_RET_SUCCESS_								=0;
+
+	_SEL_PLAYER_RET_NOTEXIST_								=-40;		//选择的角色不存在
+	_SEL_PLAYER_RET_SVRASSERT_								=-41;		//角色所在服务器正在维护
+	_SEL_PLAYER_RET_ISDEL_									=-42;		//角色已经被删除
+	_SEL_PLAYER_RET_GATEASSERT_								=-43;		//游戏服务器网关正在维护
+	_SEL_PLAYER_RET_DBERROR_								=-44;		//数据库错误
+}
+//0x0108
+message UserSelPlayerRet {
+	E_SELPLAYER errorCode = 1;
+	string name           = 2;
+	string ipAddr         = 3;
+	int32 port            = 4;
+	int32 mapid           = 5;
+	int32 gamesvrIdType   = 6;
+	int64 userOnlyID      = 7;
+	string tgwIP          = 8;
+}
